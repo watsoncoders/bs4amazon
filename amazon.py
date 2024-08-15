@@ -74,14 +74,14 @@ class Scraper:
     def extract_xpath(self, dom, xpath):
         elements = dom.xpath(xpath)
         if elements:
-            if isinstance(elements[0], etree._ElementStringResult):
+            if isinstance(elements[0], etree._ElementUnicodeResult):
                 return elements[0] if elements[0] else 'לא צויין על ידי המפרסם'
             return elements[0].text.strip() if elements[0].text else 'לא צויין על ידי המפרסם'
         return 'לא צויין על ידי המפרסם'
 
 if __name__ == "__main__":
     # The file containing the list of URLs
-    urls_file = 'amazon.txt'
+    urls_file = 'urls.txt'
 
     # Create scraper instance and start scraping
     scraper = Scraper(urls_file)
