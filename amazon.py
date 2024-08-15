@@ -15,9 +15,9 @@ class Scraper:
         # Initialize CSV file with headers if it doesn't exist
         if not os.path.exists(self.csv_file):
             df = pd.DataFrame(columns=[
-                'URL', 'Title', 'Price', 'Image', 'Twister', 'Color', 
-                'Color_List', 'Features', 'CorePrice', 'Delivery', 
-                'Delivery_Message', 'Merchant_Info'
+                'URL', 'Title_HTML', 'Price_HTML', 'Image_HTML', 'Twister_HTML', 'Color_HTML', 
+                'Color_List_HTML', 'Features_HTML', 'CorePrice_HTML', 'Delivery_HTML', 
+                'Delivery_Message_HTML', 'Merchant_Info_HTML'
             ])
             df.to_csv(self.csv_file, index=False, encoding='utf-8-sig')
 
@@ -44,17 +44,17 @@ class Scraper:
 
             data = {
                 'URL': url,
-                'Title': self.extract_xpath(dom, '//*[@id="title_feature_div"]'),
-                'Price': self.extract_xpath(dom, '//*[@id="corePriceDisplay_desktop_feature_div"]/div[1]/span[2]'),
-                'Image': self.extract_xpath(dom, '//*[@id="main-image-container"]/ul/li[1]/span/@src'),
-                'Twister': self.extract_xpath(dom, '//*[@id="twister_feature_div"]'),
-                'Color': self.extract_xpath(dom, '//*[@id="variation_color_name"]/div'),
-                'Color_List': self.extract_xpath(dom, '//*[@id="variation_color_name"]/ul'),
-                'Features': self.extract_xpath(dom, '//*[@id="feature-bullets"]'),
-                'CorePrice': self.extract_xpath(dom, '//*[@id="corePrice_feature_div"]/div/div'),
-                'Delivery': self.extract_xpath(dom, '//*[@id="deliveryBlockSelectAsin"]'),
-                'Delivery_Message': self.extract_xpath(dom, '//*[@id="mir-layout-DELIVERY_BLOCK-slot-PRIMARY_DELIVERY_MESSAGE_LARGE"]/span'),
-                'Merchant_Info': self.extract_xpath(dom, '//*[@id="merchantInfoFeature_feature_div"]/div[2]/div/span')
+                'Title_HTML': self.extract_xpath_html(dom, '//*[@id="title_feature_div"]'),
+                'Price_HTML': self.extract_xpath_html(dom, '//*[@id="corePriceDisplay_desktop_feature_div"]/div[1]/span[2]'),
+                'Image_HTML': self.extract_xpath_html(dom, '//*[@id="main-image-container"]/ul/li[1]/span'),
+                'Twister_HTML': self.extract_xpath_html(dom, '//*[@id="twister_feature_div"]'),
+                'Color_HTML': self.extract_xpath_html(dom, '//*[@id="variation_color_name"]/div'),
+                'Color_List_HTML': self.extract_xpath_html(dom, '//*[@id="variation_color_name"]/ul'),
+                'Features_HTML': self.extract_xpath_html(dom, '//*[@id="feature-bullets"]'),
+                'CorePrice_HTML': self.extract_xpath_html(dom, '//*[@id="corePrice_feature_div"]/div/div'),
+                'Delivery_HTML': self.extract_xpath_html(dom, '//*[@id="deliveryBlockSelectAsin"]'),
+                'Delivery_Message_HTML': self.extract_xpath_html(dom, '//*[@id="mir-layout-DELIVERY_BLOCK-slot-PRIMARY_DELIVERY_MESSAGE_LARGE"]/span'),
+                'Merchant_Info_HTML': self.extract_xpath_html(dom, '//*[@id="merchantInfoFeature_feature_div"]/div[2]/div/span')
             }
 
             # Save the data into the CSV file
@@ -71,12 +71,11 @@ class Scraper:
         if not self.urls:
             os.remove(self.progress_file)
 
-    def extract_xpath(self, dom, xpath):
+    def extract_xpath_html(self, dom, xpath):
         elements = dom.xpath(xpath)
         if elements:
-            if isinstance(elements[0], etree._ElementUnicodeResult):
-                return elements[0] if elements[0] else 'לא צויין על ידי המפרסם'
-            return elements[0].text.strip() if elements[0].text else 'לא צויין על ידי המפרסם'
+            # If it's a valid HTML element, return the HTML content
+            return etree.tostring(elements[0], encoding='unicode', pretty_print=True) if elements else 'לא צויין על ידי המפרסם'
         return 'לא צויין על ידי המפרסם'
 
 if __name__ == "__main__":
