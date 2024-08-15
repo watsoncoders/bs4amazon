@@ -80,7 +80,7 @@ class Scraper:
 
 if __name__ == "__main__":
     # The file containing the list of URLs
-    urls_file = 'urls.txt'
+    urls_file = 'amazon.txt'
 
     # Create scraper instance and start scraping
     scraper = Scraper(urls_file)
